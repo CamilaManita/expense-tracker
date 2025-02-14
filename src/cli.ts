@@ -1,0 +1,69 @@
+import { Command } from 'commander';
+import expenseService from './services/expenseService';
+
+const program = new Command();
+
+program
+  .name('expense-tracker')
+  .description('A simple CLI to track expenses')
+  .version('1.0.0');
+
+program
+  .command("add")
+  .description("Add a new expense")
+  .argument("<description>", "Expense description")
+  .argument("<amount>", "Expense amount")
+  .action((description, amount) => {
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount)) {
+      console.error("Error: Amount must be a number.");
+      return;
+    }
+
+    const expense = expenseService.addExpense(description, parsedAmount);
+    console.log(`Expense added successfully (ID: ${expense.id})`);
+  });
+
+program
+  .command('list')
+  .description('List all expenses')
+  .action(() => {
+    const expenses = expenseService.listExpenses();
+    console.table(expenses);
+  });
+
+program
+  .command('delete')
+  .description('Delete an expense')
+  .option('-i, --id <id>', 'Expense ID')
+  .action((options) => {
+    if (!options.id) {
+      console.error('Please provide an ID');
+      return;
+    }
+    const success = expenseService.deleteExpense(parseInt(options.id));
+    if (success) console.log('Expense deleted successfully');
+    else console.error('Expense not found');
+  });
+
+  program
+  .command("summary")
+  .description("Show total expenses or filter by month")
+  .option("-m, --month <month>", "Show summary for a specific month (1-12)")
+  .action((options) => {
+    if (options.month) {
+      const month = parseInt(options.month);
+      if (isNaN(month) || month < 1 || month > 12) {
+        console.error("Error: Month must be a number between 1 and 12.");
+        return;
+      }
+      const total = expenseService.getMonthlySummary(month);
+      console.log(`Total expenses for month ${month}: $${total}`);
+    } else {
+      const total = expenseService.getSummary();
+      console.log(`Total expenses: $${total}`);
+    }
+  });
+
+
+program.parse(process.argv);

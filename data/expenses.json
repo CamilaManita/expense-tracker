@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "description": "Comida",
+    "amount": 50,
+    "date": "2025-02-14"
+  },
+  {
+    "id": 2,
+    "description": "Cena",
+    "amount": 30,
+    "date": "2025-02-14"
+  },
+  {
+    "id": 4,
+    "description": "Netflix",
+    "amount": 10,
+    "date": "2025-02-14"
+  },
+  {
+    "id": 5,
+    "description": "Super",
+    "amount": 100,
+    "date": "2025-02-14"
+  },
+  {
+    "id": 6,
+    "description": "Gym",
+    "amount": 40,
+    "date": "2025-02-14"
+  }
+]
