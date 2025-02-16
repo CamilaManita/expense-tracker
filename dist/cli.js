@@ -7,9 +7,9 @@ const commander_1 = require("commander");
 const expenseService_1 = __importDefault(require("./services/expenseService"));
 const program = new commander_1.Command();
 program
-    .name('expense-tracker')
-    .description('A simple CLI to track expenses')
-    .version('1.0.0');
+    .name("expense-tracker")
+    .description("A simple CLI to track expenses")
+    .version("1.0.0");
 program
     .command("add")
     .description("Add a new expense")
@@ -17,34 +17,34 @@ program
     .argument("<amount>", "Expense amount")
     .action((description, amount) => {
     const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount)) {
-        console.error("Error: Amount must be a number.");
-        return;
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+        console.error("❌ Error: Amount must be a positive number.");
+        process.exit(1);
     }
     const expense = expenseService_1.default.addExpense(description, parsedAmount);
+    if (!expense)
+        return;
     console.log(`Expense added successfully (ID: ${expense.id})`);
 });
 program
-    .command('list')
-    .description('List all expenses')
+    .command("list")
+    .description("List all expenses")
     .action(() => {
     const expenses = expenseService_1.default.listExpenses();
     console.table(expenses);
 });
 program
-    .command('delete')
-    .description('Delete an expense')
-    .option('-i, --id <id>', 'Expense ID')
+    .command("delete")
+    .description("Delete an expense")
+    .option("-i, --id <id>", "Expense ID")
     .action((options) => {
     if (!options.id) {
-        console.error('Please provide an ID');
-        return;
+        console.error("Please provide an ID");
+        process.exit(1);
     }
     const success = expenseService_1.default.deleteExpense(parseInt(options.id));
     if (success)
-        console.log('Expense deleted successfully');
-    else
-        console.error('Expense not found');
+        console.log("Expense deleted successfully");
 });
 program
     .command("summary")

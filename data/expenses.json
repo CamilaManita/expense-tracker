@@ -1,11 +1,5 @@
 [
   {
-    "id": 1,
-    "description": "Comida",
-    "amount": 50,
-    "date": "2025-02-14"
-  },
-  {
     "id": 2,
     "description": "Cena",
     "amount": 30,
@@ -28,5 +22,11 @@
     "description": "Gym",
     "amount": 40,
     "date": "2025-02-14"
+  },
+  {
+    "id": 6,
+    "description": "Cena",
+    "amount": 20,
+    "date": "2025-02-16"
   }
 ]

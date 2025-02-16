@@ -1,88 +1,60 @@
-import fs from 'fs';
-import path from 'path';
-import { Expense } from '../models/expense';
+import { Expense } from "../models/expense";
+import { IExpenseService } from "./iExpenseService";
+import { AddExpenseAction } from "../actions/addExpenseAction";
+import { DeleteExpenseAction } from "../actions/deleteExpenseAction";
+import { GetSummaryAction } from "../actions/getSummaryAction";
+import { GetMonthlySummaryAction } from "../actions/getMonthlySummaryActions";
+import { IExpenseRepository } from "../repositories/iExpenseRepository";
+import { ExpenseRepository } from "../repositories/expenseRepository";
+import { CustomError } from "../errors/customError";
 
-const DATA_DIR = path.join(__dirname, "../../data");
-const DATA_FILE = path.join(DATA_DIR, "expenses.json");
+export class ExpenseService implements IExpenseService {
+  private repository: IExpenseRepository;
+  private addExpenseAction: AddExpenseAction;
+  private deleteExpenseAction: DeleteExpenseAction;
+  private getSummaryAction: GetSummaryAction;
+  private getMonthlySummaryAction: GetMonthlySummaryAction;
 
-class ExpenseService {
-  private expenses: Expense[] = [];
-
-  constructor() {
-    this.ensureDataFile();
-    this.loadExpenses();
+  constructor(repository: ExpenseRepository) {
+    this.repository = repository;
+    this.addExpenseAction = new AddExpenseAction(repository);
+    this.deleteExpenseAction = new DeleteExpenseAction(repository);
+    this.getSummaryAction = new GetSummaryAction(repository);
+    this.getMonthlySummaryAction = new GetMonthlySummaryAction(repository);
   }
 
-  private ensureDataFile(): void {
-    // Crear la carpeta "data" si no existe
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+  public addExpense(description: string, amount: number): Expense {
+    const expense = this.addExpenseAction.execute(description, amount);
+    if (expense === null) {
+      throw new Error("Failed to add expense");
     }
-
-    // Crear el archivo "expenses.json" si no existe
-    if (!fs.existsSync(DATA_FILE)) {
-      fs.writeFileSync(DATA_FILE, "[]", "utf-8");
-    }
+    return expense;
   }
 
-  private loadExpenses(): void {
+  public listExpenses(): Expense[] {
+    return this.repository.getExpenses();
+  }
+
+  public deleteExpense(id: number): boolean {
     try {
-      const data = fs.readFileSync(DATA_FILE, "utf-8");
-      this.expenses = JSON.parse(data) as Expense[];
+      return this.deleteExpenseAction.execute(id);
     } catch (error) {
-      console.error("Error loading expenses:", error);
-      this.expenses = [];
+      if (error instanceof CustomError) {
+        console.error(error.message); 
+      } else {
+        console.error("❌ Unexpected error:", error);
+      }
+      return false; 
     }
   }
 
-  private saveExpenses(): void {
-    try {
-      fs.writeFileSync(DATA_FILE, JSON.stringify(this.expenses, null, 2), "utf-8");
-    } catch (error) {
-      console.error("Error saving expenses:", error);
-    }
+  public getMonthlySummary(month: number): number {
+    return this.getMonthlySummaryAction.execute(month);
   }
-
-
-  addExpense(description: string, amount: number): Expense {
-    const newExpense: Expense = {
-      id: this.expenses.length + 1,
-      description,
-      amount,
-      date: new Date().toISOString().split("T")[0],
-    }
-    this.expenses.push(newExpense);
-    this.saveExpenses();
-    return newExpense;
-  }
-
-  listExpenses(): Expense[] {
-    return this.expenses;
-  }  
-
-  deleteExpense(id: number): boolean {
-    const index = this.expenses.findIndex(expense => expense.id === id);
-    if (index === -1) {
-      return false;
-    }
-    this.expenses.splice(index, 1);
-    this.saveExpenses();
-    return true;
-  }
-
-  getSummary(): number {
-    const total = this.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-    return total;
-  }
-
-  getMonthlySummary(month: number): number {
-    const filteredExpenses = this.expenses.filter(exp => {
-      const expenseMonth = new Date(exp.date).getMonth() + 1;
-      return expenseMonth === month;
-    });
   
-    return filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+  public getSummary(): number {
+    return this.getSummaryAction.execute();
   }  
 }
 
-export default new ExpenseService();
+export default ExpenseService;

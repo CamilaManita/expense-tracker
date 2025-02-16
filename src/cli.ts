@@ -1,12 +1,12 @@
-import { Command } from 'commander';
-import expenseService from './services/expenseService';
+import { Command } from "commander";
+import expenseService from "./services/expenseService";
 
 const program = new Command();
 
 program
-  .name('expense-tracker')
-  .description('A simple CLI to track expenses')
-  .version('1.0.0');
+  .name("expense-tracker")
+  .description("A simple CLI to track expenses")
+  .version("1.0.0");
 
 program
   .command("add")
@@ -15,38 +15,38 @@ program
   .argument("<amount>", "Expense amount")
   .action((description, amount) => {
     const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount)) {
-      console.error("Error: Amount must be a number.");
-      return;
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      console.error("❌ Error: Amount must be a positive number.");
+      process.exit(1);
     }
 
     const expense = expenseService.addExpense(description, parsedAmount);
+    if (!expense) return;
     console.log(`Expense added successfully (ID: ${expense.id})`);
   });
 
 program
-  .command('list')
-  .description('List all expenses')
+  .command("list")
+  .description("List all expenses")
   .action(() => {
     const expenses = expenseService.listExpenses();
     console.table(expenses);
   });
 
 program
-  .command('delete')
-  .description('Delete an expense')
-  .option('-i, --id <id>', 'Expense ID')
+  .command("delete")
+  .description("Delete an expense")
+  .option("-i, --id <id>", "Expense ID")
   .action((options) => {
     if (!options.id) {
-      console.error('Please provide an ID');
-      return;
+      console.error("Please provide an ID");
+      process.exit(1);
     }
     const success = expenseService.deleteExpense(parseInt(options.id));
-    if (success) console.log('Expense deleted successfully');
-    else console.error('Expense not found');
+    if (success) console.log("Expense deleted successfully");
   });
 
-  program
+program
   .command("summary")
   .description("Show total expenses or filter by month")
   .option("-m, --month <month>", "Show summary for a specific month (1-12)")
@@ -64,6 +64,5 @@ program
       console.log(`Total expenses: $${total}`);
     }
   });
-
 
 program.parse(process.argv);
