@@ -3,30 +3,56 @@
     "id": 2,
     "description": "Cena",
     "amount": 30,
-    "date": "2025-02-14"
+    "date": "2025-02-14",
+    "category": "Comida"
   },
   {
     "id": 4,
     "description": "Netflix",
     "amount": 10,
-    "date": "2025-02-14"
+    "date": "2025-02-14",
+    "category": "Entretenimiento"
   },
   {
     "id": 5,
     "description": "Super",
     "amount": 100,
-    "date": "2025-02-14"
+    "date": "2025-02-14",
+    "category": "Hogar"
   },
   {
     "id": 6,
     "description": "Gym",
     "amount": 40,
-    "date": "2025-02-14"
+    "date": "2025-02-14",
+    "category": "Salud"
   },
   {
     "id": 6,
     "description": "Cena",
     "amount": 20,
-    "date": "2025-02-16"
+    "date": "2025-02-16",
+    "category": "Comida"
+  },
+  {
+    "id": 6,
+    "description": "Cena",
+    "amount": 25,
+    "date": "2025-02-16",
+    "category": "Comida"
+  },
+  {
+    "id": 7,
+    "description": "Uber",
+    "amount": 10,
+    "date": "2025-02-16",
+    "category": "Transporte"
+  },
+  {
+    "id": 8,
+    "description": "Netflix",
+    "amount": 15,
+    "date": "2025-02-16",
+    "category": "Entretenimiento"
   }
 ]

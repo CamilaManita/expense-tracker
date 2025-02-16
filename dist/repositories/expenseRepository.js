@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpenseRepository = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const logger_1 = require("../utils/logger");
 const customError_1 = require("../errors/customError");
 const DATA_DIR = path_1.default.join(__dirname, "../../data");
 const DATA_FILE = path_1.default.join(DATA_DIR, "expenses.json");
@@ -32,7 +33,12 @@ class ExpenseRepository {
             return JSON.parse(data);
         }
         catch (error) {
-            console.error("Error reading expenses", error);
+            if (error instanceof Error) {
+                logger_1.logger.error("Error reading expenses file: " + error.message);
+            }
+            else {
+                logger_1.logger.error("Unknown error reading expenses file");
+            }
             return [];
         }
     }
@@ -42,10 +48,10 @@ class ExpenseRepository {
         }
         catch (error) {
             if (error instanceof customError_1.CustomError) {
-                console.error("❌ Application error:", error.message);
+                logger_1.logger.error("❌ Application error:", error.message);
             }
             else {
-                console.error('Error saving expenses:', error);
+                logger_1.logger.error('Error saving expenses:', error);
             }
         }
     }

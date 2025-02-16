@@ -1,5 +1,8 @@
 import { Command } from "commander";
-import expenseService from "./services/expenseService";
+import ExpenseService from "./services/expenseService";
+import { ExpenseRepository } from "./repositories/expenseRepository";
+
+const expenseService = new ExpenseService(new ExpenseRepository());
 
 const program = new Command();
 
@@ -13,16 +16,29 @@ program
   .description("Add a new expense")
   .argument("<description>", "Expense description")
   .argument("<amount>", "Expense amount")
-  .action((description, amount) => {
+  .argument("<category>", "Expense category")
+  .action((description, amount, category) => {
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      console.error("❌ Error: Amount must be a positive number.");
+      console.error("❌ Error: Amount must be a valid positive number.");
       process.exit(1);
     }
 
-    const expense = expenseService.addExpense(description, parsedAmount);
-    if (!expense) return;
-    console.log(`Expense added successfully (ID: ${expense.id})`);
+    const expense = expenseService.addExpense(
+      description,
+      parsedAmount,
+      category
+    );
+    console.log(`✅ Expense added successfully (ID: ${expense.id})`);
+  });
+
+program
+  .command("list-category")
+  .description("List expenses by category")
+  .argument("<category>", "Expense category")
+  .action((category) => {
+    const expenses = expenseService.getExpensesByCategory(category);
+    console.table(expenses);
   });
 
 program
@@ -43,7 +59,7 @@ program
       process.exit(1);
     }
     const success = expenseService.deleteExpense(parseInt(options.id));
-    if (success) console.log("Expense deleted successfully");
+    if (success !== undefined) console.log("Expense deleted successfully");
   });
 
 program

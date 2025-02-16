@@ -29,7 +29,7 @@ describe("ExpenseService", () => {
   });
 
   test("should add an expense", () => {
-    const expense = service.addExpense("Lunch", 15);
+    const expense = service.addExpense("Lunch", 15, "Food");
     expect(expense).toBeDefined();
     expect(expense.description).toBe("Lunch");
     expect(expense.amount).toBe(15);
@@ -37,18 +37,18 @@ describe("ExpenseService", () => {
   });
 
   test("should return total summary", () => {
-    service.addExpense("Lunch", 15);
-    service.addExpense("Dinner", 25);
+    service.addExpense("Lunch", 15, "Food");
+    service.addExpense("Dinner", 25, "Food");
     expect(service.getSummary()).toBe(40);
   });
 
   test("should return monthly summary", () => {
-    service.addExpense("Lunch", 15);
+    service.addExpense("Lunch", 15, "Food");
     expect(service.getMonthlySummary(new Date().getMonth() + 1)).toBe(15);
   });
 
   test("should delete an expense", () => {
-    const expense = service.addExpense("Lunch", 15);
+    const expense = service.addExpense("Lunch", 15, "Food");
     expect(service.deleteExpense(expense.id)).toBe(true);
     expect(mockRepository.getExpenses()).toHaveLength(0);
   });

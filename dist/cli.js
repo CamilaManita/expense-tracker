@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const commander_1 = require("commander");
 const expenseService_1 = __importDefault(require("./services/expenseService"));
+const expenseRepository_1 = require("./repositories/expenseRepository");
+const expenseService = new expenseService_1.default(new expenseRepository_1.ExpenseRepository());
 const program = new commander_1.Command();
 program
     .name("expense-tracker")
@@ -15,22 +17,29 @@ program
     .description("Add a new expense")
     .argument("<description>", "Expense description")
     .argument("<amount>", "Expense amount")
-    .action((description, amount) => {
+    .argument("<category>", "Expense category")
+    .action((description, amount, category) => {
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-        console.error("❌ Error: Amount must be a positive number.");
+        console.error("❌ Error: Amount must be a valid positive number.");
         process.exit(1);
     }
-    const expense = expenseService_1.default.addExpense(description, parsedAmount);
-    if (!expense)
-        return;
-    console.log(`Expense added successfully (ID: ${expense.id})`);
+    const expense = expenseService.addExpense(description, parsedAmount, category);
+    console.log(`✅ Expense added successfully (ID: ${expense.id})`);
+});
+program
+    .command("list-category")
+    .description("List expenses by category")
+    .argument("<category>", "Expense category")
+    .action((category) => {
+    const expenses = expenseService.getExpensesByCategory(category);
+    console.table(expenses);
 });
 program
     .command("list")
     .description("List all expenses")
     .action(() => {
-    const expenses = expenseService_1.default.listExpenses();
+    const expenses = expenseService.listExpenses();
     console.table(expenses);
 });
 program
@@ -42,8 +51,8 @@ program
         console.error("Please provide an ID");
         process.exit(1);
     }
-    const success = expenseService_1.default.deleteExpense(parseInt(options.id));
-    if (success)
+    const success = expenseService.deleteExpense(parseInt(options.id));
+    if (success !== undefined)
         console.log("Expense deleted successfully");
 });
 program
@@ -57,11 +66,11 @@ program
             console.error("Error: Month must be a number between 1 and 12.");
             return;
         }
-        const total = expenseService_1.default.getMonthlySummary(month);
+        const total = expenseService.getMonthlySummary(month);
         console.log(`Total expenses for month ${month}: $${total}`);
     }
     else {
-        const total = expenseService_1.default.getSummary();
+        const total = expenseService.getSummary();
         console.log(`Total expenses: $${total}`);
     }
 });
