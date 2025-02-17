@@ -6,7 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const commander_1 = require("commander");
 const expenseService_1 = __importDefault(require("./services/expenseService"));
 const expenseRepository_1 = require("./repositories/expenseRepository");
-const expenseService = new expenseService_1.default(new expenseRepository_1.ExpenseRepository());
+const budgetRepository_1 = require("./repositories/budgetRepository");
+const expenseService = new expenseService_1.default(new expenseRepository_1.ExpenseRepository(), new budgetRepository_1.BudgetRepository());
 const program = new commander_1.Command();
 program
     .name("expense-tracker")
@@ -72,6 +73,30 @@ program
     else {
         const total = expenseService.getSummary();
         console.log(`Total expenses: $${total}`);
+    }
+});
+program
+    .command("set-budget")
+    .description("Set a monthly budget")
+    .argument("<month>", "Month (1-12)")
+    .argument("<amount>", "Budget amount")
+    .action((month, amount) => {
+    const parsedMonth = parseInt(month);
+    const parsedAmount = parseFloat(amount);
+    expenseService.setBudget(parsedMonth, parsedAmount);
+});
+program
+    .command("get-budget")
+    .description("Get the budget for a month")
+    .argument("<month>", "Month (1-12)")
+    .action((month) => {
+    const parsedMonth = parseInt(month);
+    const budget = expenseService.getBudgetForMonth(parsedMonth);
+    if (budget) {
+        console.log(`✅ Budget for month ${parsedMonth}: $${budget.amount}`);
+    }
+    else {
+        console.log(`⚠️ No budget set for month ${parsedMonth}.`);
     }
 });
 program.parse(process.argv);

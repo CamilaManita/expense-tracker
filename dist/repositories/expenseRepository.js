@@ -11,9 +11,6 @@ const customError_1 = require("../errors/customError");
 const DATA_DIR = path_1.default.join(__dirname, "../../data");
 const DATA_FILE = path_1.default.join(DATA_DIR, "expenses.json");
 class ExpenseRepository {
-    static addExpense(description, parsedAmount) {
-        throw new Error('Method not implemented.');
-    }
     constructor() {
         this.ensureDataFile();
     }

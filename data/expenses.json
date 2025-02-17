@@ -54,5 +54,12 @@
     "amount": 15,
     "date": "2025-02-16",
     "category": "Entretenimiento"
+  },
+  {
+    "id": 9,
+    "description": "Shopping",
+    "amount": 600,
+    "date": "2025-02-16",
+    "category": "Compras"
   }
 ]

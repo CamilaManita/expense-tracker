@@ -2,7 +2,9 @@ import { Command } from "commander";
 import ExpenseService from "./services/expenseService";
 import { ExpenseRepository } from "./repositories/expenseRepository";
 
-const expenseService = new ExpenseService(new ExpenseRepository());
+import { BudgetRepository } from "./repositories/budgetRepository";
+
+const expenseService = new ExpenseService(new ExpenseRepository(), new BudgetRepository());
 
 const program = new Command();
 
@@ -78,6 +80,31 @@ program
     } else {
       const total = expenseService.getSummary();
       console.log(`Total expenses: $${total}`);
+    }
+  });
+
+program
+  .command("set-budget")
+  .description("Set a monthly budget")
+  .argument("<month>", "Month (1-12)")
+  .argument("<amount>", "Budget amount")
+  .action((month, amount) => {
+    const parsedMonth = parseInt(month);
+    const parsedAmount = parseFloat(amount);
+    expenseService.setBudget(parsedMonth, parsedAmount);
+  });
+
+  program
+  .command("get-budget")
+  .description("Get the budget for a month")
+  .argument("<month>", "Month (1-12)")
+  .action((month) => {
+    const parsedMonth = parseInt(month);
+    const budget = expenseService.getBudgetForMonth(parsedMonth);
+    if (budget) {
+      console.log(`✅ Budget for month ${parsedMonth}: $${budget.amount}`);
+    } else {
+      console.log(`⚠️ No budget set for month ${parsedMonth}.`);
     }
   });
 

@@ -9,9 +9,6 @@ const DATA_DIR = path.join(__dirname, "../../data");
 const DATA_FILE = path.join(DATA_DIR, "expenses.json");
 
 export class ExpenseRepository implements IExpenseRepository{
-  static addExpense(description: any, parsedAmount: number) {
-    throw new Error('Method not implemented.');
-  }
 
   constructor() {
     this.ensureDataFile();

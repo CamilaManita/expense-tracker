@@ -7,14 +7,18 @@ const getSummaryAction_1 = require("../actions/getSummaryAction");
 const getMonthlySummaryActions_1 = require("../actions/getMonthlySummaryActions");
 const getExpensesByCategoryAction_1 = require("../actions/getExpensesByCategoryAction");
 const customError_1 = require("../errors/customError");
+const budgetRepository_1 = require("../repositories/budgetRepository");
+const setBudgetActions_1 = require("../actions/setBudgetActions");
 class ExpenseService {
-    constructor(repository) {
+    constructor(repository, budgetRepository) {
         this.repository = repository;
-        this.addExpenseAction = new addExpenseAction_1.AddExpenseAction(repository);
+        this.budgetRepository = budgetRepository || new budgetRepository_1.BudgetRepository();
+        this.addExpenseAction = new addExpenseAction_1.AddExpenseAction(repository, this.budgetRepository);
         this.deleteExpenseAction = new deleteExpenseAction_1.DeleteExpenseAction(repository);
         this.getSummaryAction = new getSummaryAction_1.GetSummaryAction(repository);
         this.getMonthlySummaryAction = new getMonthlySummaryActions_1.GetMonthlySummaryAction(repository);
         this.getExpensesByCategoryAction = new getExpensesByCategoryAction_1.GetExpensesByCategoryAction(repository);
+        this.setBudgetAction = new setBudgetActions_1.SetBudgetAction(this.budgetRepository);
     }
     addExpense(description, amount, category) {
         const expense = this.addExpenseAction.execute(description, amount, category);
@@ -59,6 +63,12 @@ class ExpenseService {
             }
             return [];
         }
+    }
+    setBudget(month, amount) {
+        return this.setBudgetAction.execute(month, amount);
+    }
+    getBudgetForMonth(month) {
+        return this.budgetRepository.getBudgetForMonth(month);
     }
 }
 exports.ExpenseService = ExpenseService;
