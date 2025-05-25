@@ -99,6 +99,14 @@ export class ExpenseService implements IExpenseService {
   public getBudgetForMonth(month: number): Budget | undefined {
     return this.budgetRepository.getBudgetForMonth(month);
   }
+
+  public getExpensesByMonth(month: number): Expense[] {
+    const expenses = this.repository.getExpenses();
+    return expenses.filter(expense => {
+      const expenseDate = new Date(expense.date);
+      return expenseDate.getMonth() + 1 === month;
+    });
+  }
 }
 
 export default ExpenseService;

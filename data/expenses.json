@@ -61,5 +61,19 @@
     "amount": 600,
     "date": "2025-02-16",
     "category": "Compras"
+  },
+  {
+    "id": 10,
+    "description": "Compras supermercado",
+    "amount": 50,
+    "date": "2025-05-24",
+    "category": "Alimentación"
+  },
+  {
+    "id": 11,
+    "description": "Compras supermercado",
+    "amount": 50,
+    "date": "2025-05-24",
+    "category": "Alimentación"
   }
 ]

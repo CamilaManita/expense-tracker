@@ -70,6 +70,13 @@ class ExpenseService {
     getBudgetForMonth(month) {
         return this.budgetRepository.getBudgetForMonth(month);
     }
+    getExpensesByMonth(month) {
+        const expenses = this.repository.getExpenses();
+        return expenses.filter(expense => {
+            const expenseDate = new Date(expense.date);
+            return expenseDate.getMonth() + 1 === month;
+        });
+    }
 }
 exports.ExpenseService = ExpenseService;
 exports.default = ExpenseService;

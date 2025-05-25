@@ -2,8 +2,14 @@
   "name": "expense-tracker",
   "version": "1.0.0",
   "main": "index.js",
+  "bin": {
+    "expense-tracker": "./dist/cli.js"
+  },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -11,6 +17,7 @@
   "description": "",
   "dependencies": {
     "@types/node": "^22.13.4",
+    "cli-table3": "^0.6.5",
     "commander": "^13.1.0",
     "moment": "^2.30.1",
     "ts-node": "^10.9.2",
